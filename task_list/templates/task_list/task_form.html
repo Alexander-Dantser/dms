@@ -1,0 +1,25 @@
+{% comment %} {% load static %}
+
+<div class="form-container">
+  <form action="">{{ form_from_model }}</form>
+</div> {% endcomment %}
+
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Форма</title>
+    <link rel="stylesheet" href="{% static 'task_list/css/styles.css' %}" />
+  </head>
+  <body>
+    <div class="form-container">
+      <form method="post">
+        {% csrf_token %}
+        {{ form_from_model }}
+        <button type="btn">Отправить</button>
+      </form>
+    </div>
+  </body>
+</html>
