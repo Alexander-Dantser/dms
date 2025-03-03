@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+
+{% block title %}
+  Изменить статус задачи
+{% endblock %}
+
+{% block content %}
+  <div class="row">
+    <div class="col-md-6 offset-md-3">
+      <h1 class="mb-4">Изменить статус задачи: {{ task.task }}</h1>
+      <form method="post">
+        {% csrf_token %}
+        
+        <!-- Поле "Статус" -->
+        <div class="mb-3">
+          <label for="status" class="form-label">Выберите статус:</label>
+          <select 
+            class="form-select {% if form.errors %}is-invalid{% endif %}" 
+            id="status" 
+            name="status"
+          >
+            {% for status in statuses %}
+              <option value="{{ status.id }}" {% if task.status.id == status.id %}selected{% endif %}>
+                {{ status.name }}
+              </option>
+            {% endfor %}
+          </select>
+          {% if form.errors %}
+            <div class="invalid-feedback">
+              {{ form.errors|join:", " }}
+            </div>
+          {% endif %}
+        </div>
+
+        <!-- Кнопки -->
+        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+          <button type="submit" class="btn btn-primary me-md-2">
+            <i class="bi bi-save"></i> Сохранить
+          </button>
+          <a href="{% url 'task_list' %}" class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-left"></i> Назад к списку
+          </a>
+        </div>
+      </form>
+    </div>
+  </div>
+{% endblock %}

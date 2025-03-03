@@ -1,0 +1,116 @@
+{% extends 'base.html' %}
+
+{% block title %}
+  Добавить задачу
+{% endblock %}
+
+{% block content %}
+  <div class="row">
+    <div class="col-md-6 offset-md-3">
+      <h1 class="mb-4">Добавить задачу</h1>
+      <form method="post">
+        {% csrf_token %}
+        
+        <!-- Поле "Задача" -->
+        <div class="mb-3">
+          <label for="{{ form.task.id_for_label }}" class="form-label">Задача</label>
+          <div class="input-group">
+            <textarea 
+              class="form-control {% if form.task.errors %}is-invalid{% endif %}" 
+              id="{{ form.task.id_for_label }}" 
+              name="{{ form.task.name }}" 
+              rows="3"
+              placeholder="Введите описание задачи"
+            >{{ form.task.value|default:'' }}</textarea>
+            <button type="button" class="btn btn-outline-secondary" id="voice-input-button">
+              <i class="bi bi-mic"></i> Голосовой ввод
+            </button>
+          </div>
+          {% if form.task.errors %}
+            <div class="invalid-feedback">
+              {{ form.task.errors|join:", " }}
+            </div>
+          {% endif %}
+        </div>
+
+        <!-- Поле "Статус" -->
+        <div class="mb-3">
+          <label for="{{ form.status.id_for_label }}" class="form-label">Статус</label>
+          <select 
+            class="form-select {% if form.status.errors %}is-invalid{% endif %}" 
+            id="{{ form.status.id_for_label }}" 
+            name="{{ form.status.name }}"
+          >
+            {% for value, label in status_choices %}
+              <option value="{{ value }}" {% if form.status.value == value or forloop.first and not form.status.value %}selected{% endif %}>
+                {{ label }}
+              </option>
+            {% endfor %}
+          </select>
+          {% if form.status.errors %}
+            <div class="invalid-feedback">
+              {{ form.status.errors|join:", " }}
+            </div>
+          {% endif %}
+        </div>
+
+        <!-- Кнопки -->
+        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+          <button type="submit" class="btn btn-primary me-md-2">
+            <i class="bi bi-save"></i> Сохранить
+          </button>
+          <a href="{% url 'task_list' %}" class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-left"></i> Назад к списку
+          </a>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- JavaScript для голосового ввода -->
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      const voiceInputButton = document.getElementById('voice-input-button');
+      const taskInput = document.getElementById('{{ form.task.id_for_label }}');
+
+      // Проверяем поддержку Web Speech API
+      if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        const recognition = new SpeechRecognition();
+
+        // Настройки распознавания
+        recognition.lang = 'ru-RU'; // Язык распознавания (русский)
+        recognition.interimResults = false; // Показывать промежуточные результаты
+        recognition.maxAlternatives = 1; // Максимальное количество альтернатив
+
+        // Обработка начала голосового ввода
+        voiceInputButton.addEventListener('click', function () {
+          recognition.start();
+          voiceInputButton.innerHTML = '<i class="bi bi-mic-mute"></i> Слушаю...';
+        });
+
+        // Обработка результата распознавания
+        recognition.addEventListener('result', function (event) {
+          const transcript = event.results[0][0].transcript;
+          taskInput.value = transcript; // Вставляем распознанный текст в поле ввода
+          voiceInputButton.innerHTML = '<i class="bi bi-mic"></i> Голосовой ввод';
+        });
+
+        // Обработка завершения распознавания
+        recognition.addEventListener('end', function () {
+          voiceInputButton.innerHTML = '<i class="bi bi-mic"></i> Голосовой ввод';
+        });
+
+        // Обработка ошибок
+        recognition.addEventListener('error', function (event) {
+          console.error('Ошибка распознавания:', event.error);
+          voiceInputButton.innerHTML = '<i class="bi bi-mic"></i> Голосовой ввод';
+        });
+      } else {
+        // Если браузер не поддерживает Web Speech API
+        voiceInputButton.disabled = true;
+        voiceInputButton.title = 'Голосовой ввод не поддерживается вашим браузером';
+      }
+    });
+  </script>
+{% endblock %}

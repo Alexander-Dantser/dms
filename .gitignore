@@ -1,7 +1,64 @@
-# .gitignore
-.Python
-__pycache__/
-*.pyc
-*.sqlite3
+# Игнорировать виртуальное окружение
+venv/
+.env/
+env/
+virtualenv/
+venv*/
+
+# Игнорировать файлы настроек (например, .env)
 .env
-.venv/
+.env.local
+.env.*.local
+
+# Игнорировать файлы базы данных SQLite
+*.sqlite3
+*.db
+
+# Игнорировать кэш Python
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Игнорировать статические файлы (если они генерируются автоматически)
+staticfiles/
+mediafiles/
+
+# Игнорировать файлы IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*.sublime-workspace
+*.sublime-project
+
+# Игнорировать файлы операционной системы
+.DS_Store
+Thumbs.db
+
+# Игнорировать логи
+*.log
+
+# Игнорировать миграции (если вы хотите, чтобы они генерировались локально)
+# */migrations/*
+# !*/migrations/__init__.py
+
+# Игнорировать установленные зависимости
+node_modules/
+bower_components/
+
+# Игнорировать собранные статические файлы (если используется сборка)
+/static/
+/media/
+
+# Игнорировать файлы pytest
+.pytest_cache/
+
+# Игнорировать файлы coverage
+.coverage
+htmlcov/
+
+# Игнорировать файлы Jupyter Notebook
+.ipynb_checkpoints/
+
+# Игнорировать файлы macOS
+.DS_Store

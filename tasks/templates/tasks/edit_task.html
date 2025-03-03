@@ -1,0 +1,64 @@
+{% extends 'base.html' %}
+
+{% block title %}
+  Редактировать задачу
+{% endblock %}
+
+{% block content %}
+  <div class="row">
+    <div class="col-md-6 offset-md-3">
+      <h1 class="mb-4">Редактировать задачу</h1>
+      <form method="post">
+        {% csrf_token %}
+        
+        <!-- Поле "Задача" -->
+        <div class="mb-3">
+          <label for="task" class="form-label">Задача</label>
+          <textarea 
+            class="form-control {% if form.task.errors %}is-invalid{% endif %}" 
+            id="task" 
+            name="task" 
+            rows="3"
+            placeholder="Введите описание задачи"
+          >{{ task.task }}</textarea>
+          {% if form.task.errors %}
+            <div class="invalid-feedback">
+              {{ form.task.errors|join:", " }}
+            </div>
+          {% endif %}
+        </div>
+
+        <!-- Поле "Статус" -->
+        <div class="mb-3">
+          <label for="status" class="form-label">Статус</label>
+          <select 
+            class="form-select {% if form.status.errors %}is-invalid{% endif %}" 
+            id="status" 
+            name="status"
+          >
+            {% for status in statuses %}
+              <option value="{{ status.id }}" {% if task.status.id == status.id %}selected{% endif %}>
+                {{ status.name }}
+              </option>
+            {% endfor %}
+          </select>
+          {% if form.status.errors %}
+            <div class="invalid-feedback">
+              {{ form.status.errors|join:", " }}
+            </div>
+          {% endif %}
+        </div>
+
+        <!-- Кнопки -->
+        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+          <button type="submit" class="btn btn-primary me-md-2">
+            <i class="bi bi-save"></i> Сохранить
+          </button>
+          <a href="{% url 'task_list' %}" class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-left"></i> Назад к списку
+          </a>
+        </div>
+      </form>
+    </div>
+  </div>
+{% endblock %}

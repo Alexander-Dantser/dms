@@ -1,0 +1,98 @@
+{% extends 'base.html' %}
+
+{% block title %}
+  Список задач
+{% endblock %}
+
+{% block content %}
+  <div class="row">
+    <div class="col">
+      <h1 class="mb-4">Список задач</h1>
+      <div class="table-responsive">
+        <table class="table table-hover">
+          <thead>
+            <tr>
+              <th scope="col">Задача</th>
+              <th scope="col">Статус</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for task in tasks %}
+              <tr>
+                <td onclick="window.location='{% url 'edit_task' task.id %}';" style="cursor: pointer;">
+                  {{ task.task }}
+                </td>
+                <td>
+                  <select 
+                    class="form-select form-select-sm status-select" 
+                    data-task-id="{{ task.id }}"
+                    style="width: auto; display: inline-block;"
+                  >
+                    {% for status in statuses %}
+                    <option value="{{ status.id }}" {% if task.status and task.status.id == status.id %}selected{% endif %}>
+                        {{ status.name }}
+                      </option>
+                    {% endfor %}
+                  </select>
+                  <span class="status-update-message text-success" style="display: none;">✓</span>
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      <a href="{% url 'add_task' %}" class="btn btn-primary mt-3">
+        <i class="bi bi-plus-circle"></i> Добавить задачу
+      </a>
+    </div>
+  </div>
+
+  <script>
+    $(document).ready(function() {
+      // Обработка изменения статуса
+      $('.status-select').change(function(event) {
+        event.stopPropagation();  // Останавливаем всплытие события
+        const taskId = $(this).data('task-id');  // ID задачи
+        const newStatusId = $(this).val();       // Новый статус
+        const statusMessage = $(this).siblings('.status-update-message');  // Элемент для отображения подтверждения
+
+        // Отправка AJAX-запроса
+        $.ajax({
+          url: '{% url "update_task_status_ajax" %}',  // URL для обновления статуса
+          method: 'POST',
+          data: {
+            task_id: taskId,
+            status_id: newStatusId,
+            csrfmiddlewaretoken: '{{ csrf_token }}'  // CSRF-токен
+          },
+          success: function(response) {
+            if (response.success) {
+              // Показываем подтверждение (галочку)
+              statusMessage.fadeIn().delay(1000).fadeOut();
+            } else {
+              console.error('Ошибка при обновлении статуса:', response.error);
+            }
+          },
+          error: function() {
+            console.error('Ошибка при отправке запроса.');
+          }
+        });
+      });
+
+      // Кликабельность строки (кроме выпадающего списка)
+      $('td').not(':has(.status-select)').click(function() {
+        window.location = $(this).closest('tr').data('edit-url');
+      });
+
+      // Добавляем data-атрибут для редактирования задачи
+      $('tr').each(function() {
+        const taskId = $(this).find('.status-select').data('task-id');
+        if (taskId) {
+          $(this).data('edit-url', '{% url "edit_task" 0 %}'.replace('0', taskId));
+        }
+      });
+    });
+  </script>
+{% endblock %}
+
+
