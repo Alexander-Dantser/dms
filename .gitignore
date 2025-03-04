@@ -39,8 +39,8 @@ Thumbs.db
 *.log
 
 # Игнорировать миграции (если вы хотите, чтобы они генерировались локально)
-# */migrations/*
-# !*/migrations/__init__.py
+*/migrations/*
+!*/migrations/__init__.py
 
 # Игнорировать установленные зависимости
 node_modules/
@@ -62,3 +62,7 @@ htmlcov/
 
 # Игнорировать файлы macOS
 .DS_Store
+
+# Файлы PostgreSQL
+*.pgpass
+*.pg_service.conf

@@ -59,17 +59,15 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'dms.wsgi.application'
 
-
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'dms',  # Название вашей базы данных
-        'USER': 'av',  # Имя пользователя PostgreSQL
-        'PASSWORD': '123',  # Пароль пользователя
-        'HOST': 'localhost',  # Хост (обычно localhost)
-        'PORT': '5432',  # Порт (по умолчанию 5432)
+    "default": {
+        "ENGINE": "django.db.backends.postgresql",
+        "OPTIONS": {
+            "service": "dms_db"
+        }
     }
 }
+
 
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
