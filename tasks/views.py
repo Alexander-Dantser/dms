@@ -75,3 +75,18 @@ def update_task_status(request, task_id):
         return redirect('task_list')
     statuses = Status.objects.all()
     return render(request, 'tasks/update_status.html', {'task': task, 'statuses': statuses})
+
+
+# Добавляем в Django-приложение view, которое будет возвращать список задач в формате JSON.
+def get_tasks_json(request):
+    tasks = Task.objects.all().select_related('status')
+    tasks_data = [
+        {
+            'id': task.id,
+            'task': task.task,
+            'status_id': task.status.id if task.status else None,
+            'status_name': task.status.name if task.status else 'Нет статуса',
+        }
+        for task in tasks
+    ]
+    return JsonResponse({'tasks': tasks_data})
